@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #coding=utf-8
 
-import pygame
+import pygame, random, sys
 
 
 WHITE = (255, 255, 255)
@@ -33,6 +33,7 @@ screen = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 grid = []
 margin = 2
 
+
 def createGrid():
     for x in range(WINDOWWIDTH / CELLSIZE):
         grid.append([])
@@ -51,8 +52,15 @@ def drawGrid():
             else:
                 color = GRAY
             pygame.draw.rect(screen, color, [(margin+CELLSIZE)*x+margin, (margin+CELLSIZE)*y+margin,CELLSIZE,CELLSIZE])
+
+def addApple():
+    return (random.randint(0, WINDOWWIDTH/CELLSIZE-1), random.randint(0, WINDOWHEIGHT/CELLSIZE-1))
+
+def createApple(pos):
+    changeGrid(pos)
     
-createGrid()    
+createGrid()
+createApple(addApple())   
 
 while True:
     for event in pygame.event.get():
@@ -61,12 +69,14 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
             row, col = pos[0]//(CELLSIZE+margin), pos[1] // (CELLSIZE+margin)
-            #print 'mouse pos', pos
-            #print 'row, col', row, col
             changeGrid((row,col))
+            while True:
+                x,y = addApple()
+                if x!=row and y != col:
+                    createApple((x,y))
+                    break
 
     drawGrid()
     pygame.display.update()
     clock.tick(30)
     
-
